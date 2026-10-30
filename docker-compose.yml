@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  scanner:
+    build: .
+    container_name: lab03-scanner
+    # host networking lets nmap reach LAN targets and do real ping sweeps on Linux servers
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      - REPORT_DIR=/app/data/reports
+      - CACHE_FILE=/app/data/cve_cache.json
+      - DB_PATH=/app/data/jobs.db
+      - ALLOWED_CIDRS=${ALLOWED_CIDRS:-0.0.0.0/0}
+      - NVD_API_KEY=${NVD_API_KEY:-}
+      - PORT=${PORT:-7676}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

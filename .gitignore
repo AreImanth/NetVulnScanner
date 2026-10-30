@@ -1,0 +1,16 @@
+# secrets
+.env
+
+# runtime data
+data/
+*.db
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+
+# reports (generated)
+vuln_report*.csv
+vuln_report*.html
+cve_cache.json
