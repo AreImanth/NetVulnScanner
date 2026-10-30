@@ -17,7 +17,7 @@ import scanner_core as sc
 
 REPORT_DIR = os.getenv("REPORT_DIR", "/app/data/reports")
 CACHE_FILE = os.getenv("CACHE_FILE", "/app/data/cve_cache.json")
-ALLOWED_CIDRS = [c.strip() for c in os.getenv("ALLOWED_CIDRS", "0.0.0.0/0").split(",") if c.strip()]
+# No allowlist: any valid IP/CIDR may be scanned (lab use). Format is still validated.
 NVD_API_KEY = os.getenv("NVD_API_KEY") or None
 DB_PATH = os.getenv("DB_PATH", "/app/data/jobs.db")
 
@@ -71,19 +71,7 @@ def _allowed_target(target: str) -> bool:
         if not parts:
             return False
         for p in parts:
-            net = ipaddress.ip_network(p, strict=False)
-            ok = False
-            for cidr in ALLOWED_CIDRS:
-                try:
-                    if net.subnet_of(ipaddress.ip_network(cidr, strict=False)):
-                        ok = True
-                        break
-                except ValueError:
-                    if p == cidr:
-                        ok = True
-                        break
-            if not ok:
-                return False
+            ipaddress.ip_network(p, strict=False)  # raises ValueError if invalid
         return True
     except ValueError:
         return False
