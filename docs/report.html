@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Sample NetVulnScanner vulnerability assessment report (static demo).">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Network Vulnerability -- NetVulnScanner Assessment Report</title>
+<link rel="stylesheet" href="./report.css">
+</head>
+<body>
+  <div class="cover">
+    <img class="logo-img" src="./NetVulnScanner.png" alt="NetVulnScanner logo" width="133" height="44" decoding="async">
+    <div class="eyebrow">Confidential — Educational Purpose only</div>
+    <h1>Network Vulnerability -- NetVulnScanner Assessment Report</h1>
+    <div class="meta-grid">
+      <div><div class="label">Scan Start</div><div class="value">2026-11-11 10:42:58</div></div>
+      <div><div class="label">Scan End</div><div class="value">2026-11-11 10:43:41</div></div>
+      <div><div class="label">Duration</div><div class="value">42.7s</div></div>
+      <div><div class="label">Hosts Scanned</div><div class="value">2</div></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2 class="section-title">Executive Summary</h2>
+    <p class="summary-text">
+      This report summarizes the results of an authorized vulnerability assessment performed
+      against 2 host(s) within the defined lab scope. A total of <strong>5</strong> finding(s)
+      were identified across all scanned services, broken down by severity below. Findings
+      without an associated CVE indicate current/patched software and are flagged for manual
+      configuration review rather than treated as an absence of risk.
+    </p>
+    <div class="summary-cards">
+      <div class="card card-critical"><div class="card-count">1</div><div class="card-label">Critical</div></div>
+      <div class="card card-high"><div class="card-count">2</div><div class="card-label">High</div></div>
+      <div class="card card-medium"><div class="card-count">1</div><div class="card-label">Medium</div></div>
+      <div class="card card-info"><div class="card-count">1</div><div class="card-label">Informational</div></div>
+    </div>
+
+    <h2 class="section-title">Scope of Assessment</h2>
+    <div class="scope-box">
+      <strong>Authorized targets:</strong>
+      <ul><li class="mono">10.0.0.0/24</li></ul>
+      All scanning was performed strictly within the range listed above. No hosts outside this
+      list were scanned.
+    </div>
+
+    <h2 class="section-title">Methodology</h2>
+    <div class="methodology">
+      <ol>
+        <li><strong>Host discovery</strong> — ICMP ping sweep (<span class="mono">nmap -sn</span>) across the authorized scope to identify live hosts.</li>
+        <li><strong>Service &amp; version detection</strong> — targeted service/version scan (<span class="mono">nmap -sV</span>) against each live host.</li>
+        <li><strong>Vulnerability mapping</strong> — each detected service/version was checked against the National Vulnerability Database (NVD) using CPE-based and keyword-based lookups.</li>
+        <li><strong>Severity scoring</strong> — CVSS base scores were mapped to standard severity bands (Critical / High / Medium / Low).</li>
+        <li><strong>Remediation mapping</strong> — each finding was paired with actionable, service-specific remediation guidance.</li>
+      </ol>
+    </div>
+
+    <h2 class="section-title">Detailed Findings</h2>
+
+    <div class="host-section">
+      <div class="host-header">
+        <h3>Host: <span class="mono">10.0.0.10</span></h3>
+        <span class="host-meta">3 finding(s) &middot; open ports: 22/tcp, 80/tcp, 443/tcp</span>
+      </div>
+      <table>
+        <thead><tr><th>Port</th><th>Service</th><th>Version</th><th>Finding</th><th>CVSS</th><th>Severity</th><th>Notes</th><th>Remediation</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="mono">22/tcp</td><td>ssh</td><td class="mono">OpenSSH 7.4</td>
+            <td class="mono">CVE-2018-15473</td><td class="center">5.3</td>
+            <td><span class="badge badge-medium">Medium</span></td>
+            <td class="notes">Username enumeration via malformed authentication packets.</td>
+            <td class="remediation">Upgrade OpenSSH; disable password auth in favor of key-based auth; add rate limiting.</td>
+          </tr>
+          <tr>
+            <td class="mono">80/tcp</td><td>http</td><td class="mono">Apache httpd 2.4.49</td>
+            <td class="mono">CVE-2021-41773</td><td class="center">7.5</td>
+            <td><span class="badge badge-high">High</span></td>
+            <td class="notes">Path traversal in Apache HTTP Server 2.4.49.</td>
+            <td class="remediation">Upgrade to Apache 2.4.51 or later; restrict path traversal via configuration.</td>
+          </tr>
+          <tr>
+            <td class="mono">443/tcp</td><td>https</td><td class="mono">Apache httpd 2.4.49</td>
+            <td class="mono">CVE-2021-42013</td><td class="center">9.8</td>
+            <td><span class="badge badge-critical">Critical</span></td>
+            <td class="notes">Path traversal leading to remote code execution (mod_cgi enabled).</td>
+            <td class="remediation">Upgrade immediately to Apache 2.4.51+; disable mod_cgi where not required.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="host-section">
+      <div class="host-header">
+        <h3>Host: <span class="mono">10.0.0.11</span></h3>
+        <span class="host-meta">2 finding(s) &middot; open ports: 80/tcp, 8080/tcp</span>
+      </div>
+      <table>
+        <thead><tr><th>Port</th><th>Service</th><th>Version</th><th>Finding</th><th>CVSS</th><th>Severity</th><th>Notes</th><th>Remediation</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="mono">80/tcp</td><td>http</td><td class="mono">nginx 1.18.0</td>
+            <td class="mono">CVE-2021-23017</td><td class="center">7.7</td>
+            <td><span class="badge badge-high">High</span></td>
+            <td class="notes">Off-by-one in the DNS resolver allowing worker process crash or code execution.</td>
+            <td class="remediation">Upgrade nginx to 1.20.1+; restrict resolver configuration.</td>
+          </tr>
+          <tr>
+            <td class="mono">8080/tcp</td><td>http</td><td class="mono">Apache Tomcat 9.0.30</td>
+            <td class="mono">No CVE</td><td class="center">&mdash;</td>
+            <td><span class="badge badge-info">Informational</span></td>
+            <td class="notes">No matching CVE for detected version; manual configuration review required.</td>
+            <td class="remediation">Review manager application exposure; enforce strong credentials; keep patched.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Note on scope of automated detection:</strong> This scan reflects automated CVE
+      lookups only. Configuration-level weaknesses (e.g. weak credentials, directory listing,
+      exposed files) are not detected by CVE databases and require manual verification.
+    </div>
+
+    <footer>
+      <span>A demonstration generated by NetVulnScanner</span>
+      <span>Report generated 2026-11-11 10:43:41</span>
+    </footer>
+  </div>
+</body>
+</html>

@@ -3,7 +3,7 @@ version: "3.9"
 services:
   scanner:
     build: .
-    container_name: lab03-scanner
+    container_name: NetVulnScanner
     # host networking lets nmap reach LAN targets and do real ping sweeps on Linux servers
     network_mode: host
     cap_add:

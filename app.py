@@ -25,7 +25,7 @@ os.makedirs(REPORT_DIR, exist_ok=True)
 os.makedirs(os.path.dirname(CACHE_FILE) or ".", exist_ok=True)
 os.makedirs(os.path.dirname(DB_PATH) or ".", exist_ok=True)
 
-app = FastAPI(title="Lab 03 — Network Vulnerability Scanner", version="1.0")
+app = FastAPI(title="Network Vulnerability Scanner  --  NetVulnScan", version="1.0")
 
 # static + templates
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")

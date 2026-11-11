@@ -1,0 +1,62 @@
+name: Deploy static demo to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege: only what Pages deployment needs.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # Guard: fail if anything unexpected (reports, .env, data, symlinks)
+      # was placed in docs/ so it can never be published.
+      - name: Verify static artifact contents
+        run: |
+          set -eu
+          unexpected=$(find docs -mindepth 1 -maxdepth 1 \
+            ! -name index.html ! -name report.html ! -name style.css ! -name report.css \
+            ! -name app.js ! -name sample_report.csv ! -name NetVulnScanner.png -print)
+          if [ -n "$unexpected" ]; then
+            echo "Unexpected entry in docs/:"
+            echo "$unexpected"
+            exit 1
+          fi
+          if [ -n "$(find docs -type l -print -quit)" ]; then
+            echo "Symlinks are not allowed in docs/"; exit 1
+          fi
+          echo "docs/ contains only the approved static demo files"
+
+      # Requires Settings > Pages > Source = "GitHub Actions".
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      # Publish ONLY the static demo directory. Never publish the repo root:
+      # it contains app.py, scanner_core.py, data/jobs.db and generated reports.
+      - name: Upload static artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,6 +1,0 @@
-# Lab 03 — Authorized scan scope
-# One target per line. IP or CIDR. Lines starting with # are ignored.
-# Only hosts listed here may be scanned — this file is read directly by scanner.py.
-# Replace the example IP below with your actual target.
-
-#your in scope IP here.

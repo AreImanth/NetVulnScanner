@@ -26,61 +26,51 @@ remediation guidance.
 ## Project Structure
 
 ```
-lab03_complete_setup_docs/
-├── scanner.py                          # Main scanner script
-├── scope.txt.example                   # Example scope file (edit before use)
-├── cve_cache.json                      # Cached NVD query results
-├── vuln_report.csv                    # Latest scan results (CSV)
-├── vuln_report.html                   # Latest scan results (HTML)
-├── updated_scanner_docs/
-│   ├── updated_scanner.py             # Enhanced scanner with dual-query CVE lookup
-│   ├── cve_cache.json                 # Cache from updated scanner
-│   ├── vuln_report.csv                # Report from updated scanner
-│   └── vuln_report.html               # Report from updated scanner
-├── Lab03_Setup_and_Configuration_windows.docx
-├── Lab03_Setup_Documentation.docx
-└── lab03_architecture.png              # Architecture diagram
+complete_setup/
+├-- app.py                    # FastAPI web app (entrypoint, API, job queue)
+├-- scanner_core.py           # Scanning engine: host/service discovery, CVE lookup, CSV/HTML reports
+├-- templates/
+│   └── index.html            # Web console UI
+├-- static/
+│   ├── style.css             # Console styles
+│   └── NetVulnScanner.png    # Logo used in the console and generated reports
+├-- data/                     # Runtime data (persisted Docker volume)
+│   ├── reports/              # Generated CSV + HTML reports
+│   ├── cve_cache.json        # Cached NVD query results
+│   └── jobs.db               # Scan job history
+├-- Dockerfile
+├-- docker-compose.yml
+└-- requirements.txt
 ```
 
 ---
 
 ## Prerequisites
 
-- **Python 3.10+**
-- **Nmap** installed system-wide
-- **python-nmap** and **requests** Python packages
-
-Install dependencies:
-```powershell
-pip install python-nmap requests
-```
+- **Docker** and **Docker Compose** (recommended), on a **Linux host** for host-mode nmap scans
+- For running without Docker: **Python 3.10+**, **Nmap** installed system-wide, and the packages in `requirements.txt`
 
 ---
 
 ## Usage
 
-1. **Edit the scope file** — copy `scope.txt.example` to `scope.txt` and add your target IPs:
-   ```powershell
-   copy scope.txt.example scope.txt
-   notepad scope.txt
+1. **(Optional) Configure** — copy `.env.example` to `.env` and set `NVD_API_KEY` / `PORT`:
+   ```sh
+   cp .env.example .env
    ```
 
-2. **Run the scanner:**
-   ```powershell
-   python scanner.py --scope scope.txt
+2. **Build and start:**
+   ```sh
+   docker compose up -d --build
    ```
 
-3. **Optional:** Use an NVD API key for higher rate limits:
-   ```powershell
-   python scanner.py --scope scope.txt --nvd-api-key YOUR_KEY_HERE
-   ```
+3. **Open the web console** at `http://<server-ip>:7676` (or your configured `PORT`).
 
-4. **Optional:** Skip CVE lookup for a fast dry run:
-   ```powershell
-   python scanner.py --scope scope.txt --no-cve-lookup
-   ```
+4. **Enter a target IP or CIDR**, click **Start Scan**, and watch progress in-page. When the scan
+   finishes, the HTML report renders in the page and the CSV is downloadable.
 
-5. **View results** — open `vuln_report.html` in a browser or review `vuln_report.csv`.
+5. **Optional:** tick **Skip CVE lookup** for a fast dry run, or paste an NVD API key in the form
+   for higher rate limits.
 
 ---
 
@@ -118,7 +108,7 @@ The scanner maps Nmap product strings to CPE identifiers for precise CVE matchin
 ## Safety & Ethics
 
 - **Only scan hosts you have explicit written authorization to test**
-- The scope file defines the legal boundary — the scanner refuses to run if it's empty
+- You define the legal boundary by the target IP/CIDR you enter — the app validates the format and refuses invalid input
 - No exploitation is performed; this is a detection and reporting tool only
 - NVD API rate limits are respected (6.5s delay without key, 0.7s with key)
 

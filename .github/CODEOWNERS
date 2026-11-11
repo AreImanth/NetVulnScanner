@@ -1,0 +1,3 @@
+# Require the owner to review changes that control what gets published.
+/.github/workflows/  @AreImanth
+/docs/               @AreImanth

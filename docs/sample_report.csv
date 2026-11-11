@@ -1,0 +1,6 @@
+Host,Port,Protocol,Service,Version,Finding,CVSS Score,Severity,Remediation,Notes
+10.0.0.10,22,tcp,ssh,OpenSSH 7.4,CVE-2018-15473,5.3,Medium,"Upgrade OpenSSH; disable password auth in favor of key-based auth; add rate limiting.","Username enumeration via malformed authentication packets."
+10.0.0.10,80,tcp,http,Apache httpd 2.4.49,CVE-2021-41773,7.5,High,"Upgrade to Apache 2.4.51 or later; restrict path traversal via configuration.","Path traversal in Apache HTTP Server 2.4.49."
+10.0.0.10,443,tcp,https,Apache httpd 2.4.49,CVE-2021-42013,9.8,Critical,"Upgrade immediately to Apache 2.4.51+; disable mod_cgi where not required.","Path traversal leading to remote code execution (mod_cgi enabled)."
+10.0.0.11,80,tcp,http,nginx 1.18.0,CVE-2021-23017,7.7,High,"Upgrade nginx to 1.20.1+; restrict resolver configuration.","Off-by-one in the DNS resolver allowing worker process crash or code execution."
+10.0.0.11,8080,tcp,http,Apache Tomcat 9.0.30,No CVE,N/A,Informational,"Review manager application exposure; enforce strong credentials; keep patched.","No matching CVE for detected version; manual configuration review required."
